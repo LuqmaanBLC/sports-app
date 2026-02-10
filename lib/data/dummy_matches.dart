@@ -1,0 +1,40 @@
+import '../models/match_model.dart';
+
+final List<MatchModel> dummyMatches = [
+  MatchModel(
+    id: "manchester_united_liverpool_sat,_29_nov_2025_18-30",
+    sport: "Soccer",
+    homeTeam: "Manchester United",
+    awayTeam: "Liverpool",
+    league: "Premier League",
+    homeLogo: "assets/logos/manu.png",
+    awayLogo: "assets/logos/liverpool.png",
+    venue: "Old Trafford",
+    time: "18:30",
+    date: "Sat, 29 Nov 2025",
+  ),
+  MatchModel(
+    id: "springboks_all_blacks_sat,_29_nov_2025_21-00",
+    sport: "Rugby",
+    homeTeam: "Springboks",
+    awayTeam: "All Blacks",
+    league: "Rugby Championship",
+    homeLogo: "assets/logos/springboks.png",
+    awayLogo: "assets/logos/allblacks.png",
+    venue: "Ellis Park",
+    time: "21:00",
+    date: "Sat, 29 Nov 2025",
+  ),
+  MatchModel(
+    id: "proteas_australia_sun,_30_nov_2025_14-00",
+    sport: "Cricket",
+    homeTeam: "Proteas",
+    awayTeam: "Australia",
+    league: "ODI Series",
+    homeLogo: "assets/logos/proteas.png",
+    awayLogo: "assets/logos/australia.png",
+    venue: "Newlands Stadium",
+    time: "14:00",
+    date: "Sun, 30 Nov 2025",
+  ),
+];
