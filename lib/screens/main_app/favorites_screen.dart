@@ -23,7 +23,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   }
 
   Future<List<MatchModel>> _loadFavorites(String? userId) async {
-    if (userId == null) return []; // guard against null
+    if (userId == null) return [];
 
     final matchIds = await FavoriteService.getFavoriteMatchIds(userId);
     final matches = await MatchesService.fetchMatchesByIds(matchIds);
@@ -32,16 +32,18 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121212),
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
-        title: const Text(
+        title: Text(
           "Favorites",
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: theme.colorScheme.onBackground,
           ),
         ),
         centerTitle: false,
@@ -56,14 +58,18 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           if (snapshot.hasError) {
             return Center(child: Text("Error: ${snapshot.error}"));
           }
+
           final favorites = snapshot.data ?? [];
+
           if (favorites.isEmpty) {
             return _buildEmptyState(context);
           }
+
           return ListView.separated(
             padding: const EdgeInsets.all(12),
             itemCount: favorites.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 12),
+            separatorBuilder: (context, index) =>
+            const SizedBox(height: 12),
             itemBuilder: (context, index) {
               return MatchCard(match: favorites[index]);
             },
@@ -74,15 +80,24 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   }
 
   Widget _buildEmptyState(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Icon(Icons.star_border, size: 80, color: Colors.grey),
-          SizedBox(height: 16),
+        children: [
+          Icon(
+            Icons.star_border,
+            size: 80,
+            color: theme.hintColor,
+          ),
+          const SizedBox(height: 16),
           Text(
             "No favorite matches yet",
-            style: TextStyle(fontSize: 16, color: Colors.grey),
+            style: TextStyle(
+              fontSize: 16,
+              color: theme.hintColor,
+            ),
           ),
         ],
       ),

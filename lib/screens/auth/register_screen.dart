@@ -28,10 +28,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     try {
-      // Save profile details into the users table
       await supabase.from('users').upsert({
-        'id': user.id, // link to the Supabase Auth user
-        'email': user.email, // keep email consistent
+        'id': user.id,
+        'email': user.email,
         'name': nameController.text.trim(),
         'surname': surnameController.text.trim(),
         'phone': phoneController.text.trim(),
@@ -56,57 +55,68 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121212),
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
-        title: const Text(
+        title: Text(
           "Complete Your Profile",
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: theme.colorScheme.onBackground,
           ),
         ),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(
+          color: theme.colorScheme.onBackground,
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom),
           child: Column(
             children: [
               _buildTextField(nameController, "Name"),
               const SizedBox(height: 16),
               _buildTextField(surnameController, "Surname"),
               const SizedBox(height: 16),
-              _buildTextField(phoneController, "Phone Number", keyboardType: TextInputType.phone),
+              _buildTextField(phoneController, "Phone Number",
+                  keyboardType: TextInputType.phone),
               const SizedBox(height: 16),
+
               TextField(
                 controller: dobController,
                 readOnly: true,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: theme.colorScheme.onBackground,
+                ),
                 decoration: InputDecoration(
                   labelText: "Date of Birth",
-                  labelStyle: const TextStyle(color: Colors.grey),
                   hintText: "Select your birth date",
-                  hintStyle: const TextStyle(color: Colors.grey),
                   filled: true,
-                  fillColor: const Color(0xFF1E1E1E),
+                  fillColor: isDark
+                      ? const Color(0xFF1E1E1E)
+                      : Colors.grey.shade100,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Colors.grey),
                   ),
                 ),
                 onTap: () async {
                   FocusScope.of(context).unfocus();
+
                   DateTime? pickedDate = await showDatePicker(
                     context: context,
                     initialDate: DateTime(2005, 1, 1),
                     firstDate: DateTime(1900),
                     lastDate: DateTime.now(),
                   );
+
                   if (pickedDate != null) {
                     dobController.text =
                     "${pickedDate.day.toString().padLeft(2, '0')}/"
@@ -115,11 +125,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   }
                 },
               ),
+
               const SizedBox(height: 16),
+
               _buildTextField(provinceController, "Province"),
               const SizedBox(height: 16),
               _buildTextField(countryController, "Country"),
+
               const SizedBox(height: 32),
+
               ElevatedButton(
                 onPressed: saveUserData,
                 style: ElevatedButton.styleFrom(
@@ -147,18 +161,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget _buildTextField(TextEditingController controller, String label,
       {TextInputType keyboardType = TextInputType.text}) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return TextField(
       controller: controller,
-      style: const TextStyle(color: Colors.white),
       keyboardType: keyboardType,
+      style: TextStyle(
+        color: theme.colorScheme.onBackground,
+      ),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Colors.grey),
         filled: true,
-        fillColor: const Color(0xFF1E1E1E),
+        fillColor:
+        isDark ? const Color(0xFF1E1E1E) : Colors.grey.shade100,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.grey),
         ),
       ),
     );

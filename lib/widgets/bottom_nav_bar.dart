@@ -12,20 +12,48 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark =
+        theme.brightness == Brightness.dark;
+
     return BottomNavigationBar(
       currentIndex: currentIndex,
       type: BottomNavigationBarType.fixed,
       onTap: onTap,
-      backgroundColor: const Color(0xFF121212), // dark background
-      selectedItemColor: Colors.green,          // highlight color
-      unselectedItemColor: Colors.grey,         // inactive color
-      showUnselectedLabels: true,               // keep labels visible
+
+      // Theme-aware background
+      backgroundColor:
+      theme.bottomAppBarTheme.color ??
+          theme.scaffoldBackgroundColor,
+
+      // Keep app accent color
+      selectedItemColor:
+      const Color(0xFF2ECC71),
+
+      // Adaptive inactive color
+      unselectedItemColor: isDark
+          ? Colors.grey
+          : Colors.grey.shade600,
+
+      showUnselectedLabels: true,
+
       items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.star), label: 'Favorites'),
-        BottomNavigationBarItem(icon: Icon(Icons.sports_soccer), label: 'Predictions'),
-        BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home'),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.star),
+            label: 'Favorites'),
+        BottomNavigationBarItem(
+            icon:
+            Icon(Icons.sports_soccer),
+            label: 'Predictions'),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'History'),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile'),
       ],
     );
   }

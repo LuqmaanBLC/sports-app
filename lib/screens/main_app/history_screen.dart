@@ -19,35 +19,43 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121212),
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
-        title: const Text(
+        title: Text(
           "Prediction History",
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: theme.colorScheme.onBackground,
           ),
         ),
         centerTitle: false,
-        automaticallyImplyLeading: false, // Removes the back arrow
+        automaticallyImplyLeading: false,
       ),
       body: FutureBuilder<List<dynamic>>(
         future: _historyFuture,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
 
           final history = snapshot.data!;
 
           if (history.isEmpty) {
-            return const Center(
+            return Center(
               child: Text(
                 "No prediction history found.",
-                style: TextStyle(color: Colors.grey, fontSize: 16),
+                style: TextStyle(
+                  color: theme.hintColor,
+                  fontSize: 16,
+                ),
               ),
             );
           }
@@ -58,66 +66,95 @@ class _HistoryScreenState extends State<HistoryScreen> {
               final item = history[index];
 
               return Card(
-                color: const Color(0xFF1E1E1E),
+                color: isDark
+                    ? const Color(0xFF1E1E1E)
+                    : Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(color: Colors.grey.shade700, width: 1), // Subtle Border
+                  side: BorderSide(
+                    color: isDark
+                        ? Colors.grey.shade800
+                        : Colors.grey.shade300,
+                    width: 1,
+                  ),
                 ),
-                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                margin: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 8),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment:
+                    CrossAxisAlignment.start,
                     children: [
-                      // Match info
                       Text(
                         "${item['homeTeam']} vs ${item['awayTeam']}",
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: theme
+                              .colorScheme.onBackground,
                         ),
                       ),
                       const SizedBox(height: 6),
                       Text(
                         "${item['date']} • ${item['time']}",
-                        style: const TextStyle(color: Colors.grey, fontSize: 14),
+                        style: TextStyle(
+                          color: theme.hintColor,
+                          fontSize: 14,
+                        ),
                       ),
                       const SizedBox(height: 16),
 
-                      // Prediction details
                       Text(
                         "Your Prediction: ${item['predictedHomeScore']} - ${item['predictedAwayScore']}",
-                        style: const TextStyle(color: Colors.white),
+                        style: TextStyle(
+                          color: theme
+                              .colorScheme.onBackground,
+                        ),
                       ),
                       Text(
                         "Winner: ${item['predictedWinner']}",
-                        style: const TextStyle(color: Colors.white),
+                        style: TextStyle(
+                          color: theme
+                              .colorScheme.onBackground,
+                        ),
                       ),
                       const SizedBox(height: 12),
 
-                      // Status block
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2A2A2A),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.grey.shade700), // Subtle Border
+                          color: isDark
+                              ? const Color(0xFF2A2A2A)
+                              : Colors.grey.shade100,
+                          borderRadius:
+                          BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.grey.shade800
+                                : Colors.grey.shade300,
+                          ),
                         ),
                         child: Text(
-                          item["isPredictionCorrect"] == null
+                          item["isPredictionCorrect"] ==
+                              null
                               ? "Match not completed yet"
-                              : item["isPredictionCorrect"] == true
+                              : item["isPredictionCorrect"] ==
+                              true
                               ? "Correct Prediction ✔️"
                               : "Incorrect Prediction ❌",
                           style: TextStyle(
                             fontSize: 14,
-                            color: item["isPredictionCorrect"] == null
-                                ? Colors.grey
-                                : item["isPredictionCorrect"] == true
+                            color: item[
+                            "isPredictionCorrect"] ==
+                                null
+                                ? theme.hintColor
+                                : item["isPredictionCorrect"] ==
+                                true
                                 ? Colors.green
                                 : Colors.red,
-                            fontWeight: FontWeight.bold,
+                            fontWeight:
+                            FontWeight.bold,
                           ),
                         ),
                       ),

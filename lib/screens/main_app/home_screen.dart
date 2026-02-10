@@ -22,46 +22,62 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     final filteredMatches = selectedSport == "All"
         ? dummyMatches
-        : dummyMatches.where((m) => m.sport == selectedSport).toList();
+        : dummyMatches
+        .where((m) => m.sport == selectedSport)
+        .toList();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0E0E10), // Dark betting background
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0E0E10),
+        backgroundColor:
+        theme.appBarTheme.backgroundColor,
         elevation: 0,
-        title: const Text(
+        title: Text(
           "Home",
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color:
+            theme.colorScheme.onBackground,
           ),
         ),
         centerTitle: false,
-        automaticallyImplyLeading: false, // Removes the back arrow
+        automaticallyImplyLeading: false,
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment:
+        CrossAxisAlignment.start,
         children: [
           // Sports Filter Row
           SizedBox(
             height: 90,
             child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              scrollDirection:
+              Axis.horizontal,
+              padding:
+              const EdgeInsets.symmetric(
+                  horizontal: 16),
               itemCount: sports.length,
-              itemBuilder: (context, index) {
+              itemBuilder:
+                  (context, index) {
                 final item = sports[index];
                 return Padding(
-                  padding: const EdgeInsets.only(right: 12),
+                  padding:
+                  const EdgeInsets.only(
+                      right: 12),
                   child: SportFilterItem(
                     label: item["label"],
                     icon: item["icon"],
-                    isSelected: selectedSport == item["label"],
+                    isSelected:
+                    selectedSport ==
+                        item["label"],
                     onTap: () {
                       setState(() {
-                        selectedSport = item["label"];
+                        selectedSport =
+                        item["label"];
                       });
                     },
                   ),
@@ -75,12 +91,22 @@ class _HomeScreenState extends State<HomeScreen> {
           // Matches List
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: filteredMatches.length,
-              itemBuilder: (context, index) {
+              padding:
+              const EdgeInsets.symmetric(
+                  horizontal: 16),
+              itemCount:
+              filteredMatches.length,
+              itemBuilder:
+                  (context, index) {
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: 14),
-                  child: MatchCard(match: filteredMatches[index]),
+                  padding:
+                  const EdgeInsets.only(
+                      bottom: 14),
+                  child: MatchCard(
+                    match:
+                    filteredMatches[
+                    index],
+                  ),
                 );
               },
             ),

@@ -67,10 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (user == null) return;
 
-    // Delete from users table
     await supabase.from('users').delete().eq('id', user.id);
-
-    // Sign out and remove auth user
     await supabase.auth.signOut();
 
     if (!mounted) return;
@@ -82,23 +79,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required String message,
     required VoidCallback onConfirm,
   }) async {
+    final theme = Theme.of(context);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1E1E1E),
-        title: Text(title, style: const TextStyle(color: Colors.white)),
-        content: Text(message, style: const TextStyle(color: Colors.white70)),
+        backgroundColor: theme.dialogBackgroundColor,
+        title: Text(
+          title,
+          style: TextStyle(color: theme.colorScheme.onBackground),
+        ),
+        content: Text(
+          message,
+          style: TextStyle(color: theme.colorScheme.onBackground),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text("Cancel", style: TextStyle(color: Colors.grey)),
+            child: Text(
+              "Cancel",
+              style: TextStyle(color: theme.hintColor),
+            ),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               onConfirm();
             },
-            child: const Text("Confirm", style: TextStyle(color: Colors.red)),
+            child: const Text(
+              "Confirm",
+              style: TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),
@@ -106,40 +117,64 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget infoTile(String label, String value) {
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+        Text(
+          label,
+          style: TextStyle(
+            color: theme.hintColor,
+            fontSize: 12,
+          ),
+        ),
         const SizedBox(height: 3),
         Text(
           value.isEmpty ? "-" : value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: theme.colorScheme.onBackground,
           ),
         ),
-        const Divider(color: Colors.grey, height: 20),
+        Divider(
+          color: theme.dividerColor,
+          height: 20,
+        ),
       ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121212),
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
-        title: const Text(
+        title: Text(
           "Profile",
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: theme.colorScheme.onBackground,
           ),
         ),
         centerTitle: false,
-        automaticallyImplyLeading: false, // Removes the back arrow
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.settings,
+              color: theme.colorScheme.onBackground,
+            ),
+            onPressed: () {
+              Navigator.pushNamed(context, '/settings');
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -156,9 +191,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             const SizedBox(height: 40),
 
-            // ----------------------
-            // SIGN OUT BUTTON
-            // ----------------------
             OutlinedButton(
               onPressed: () {
                 _showConfirmationDialog(
@@ -170,24 +202,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
                 side: const BorderSide(color: Colors.red, width: 2),
-                backgroundColor: const Color(0xFF121212),
+                backgroundColor: theme.scaffoldBackgroundColor,
               ),
               child: const Text(
                 "Sign Out",
-                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
 
             const SizedBox(height: 12),
 
-            // ----------------------
-            // DELETE ACCOUNT BUTTON
-            // ----------------------
             ElevatedButton(
               onPressed: () {
                 _showConfirmationDialog(
                   title: "Delete Account",
-                  message: "Are you sure you want to delete your account? This action cannot be undone.",
+                  message:
+                  "Are you sure you want to delete your account? This action cannot be undone.",
                   onConfirm: deleteAccount,
                 );
               },

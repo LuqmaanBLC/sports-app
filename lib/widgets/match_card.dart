@@ -10,10 +10,12 @@ class MatchCard extends StatefulWidget {
   const MatchCard({super.key, required this.match});
 
   @override
-  State<MatchCard> createState() => _MatchCardState();
+  State<MatchCard> createState() =>
+      _MatchCardState();
 }
 
-class _MatchCardState extends State<MatchCard> {
+class _MatchCardState
+    extends State<MatchCard> {
   bool _isFavorite = false;
 
   @override
@@ -23,52 +25,70 @@ class _MatchCardState extends State<MatchCard> {
   }
 
   Future<void> _loadFavoriteStatus() async {
-    final userId = Supabase.instance.client.auth.currentUser?.id;
+    final userId = Supabase
+        .instance.client.auth.currentUser?.id;
+
     if (userId == null) {
       setState(() => _isFavorite = false);
       return;
     }
 
-    final fav = await FavoriteService.isFavorite(widget.match.id, userId);
+    final fav = await FavoriteService
+        .isFavorite(
+        widget.match.id, userId);
+
     setState(() {
       _isFavorite = fav;
     });
   }
 
   Future<void> _toggleFavorite() async {
-    final userId = Supabase.instance.client.auth.currentUser?.id;
+    final userId = Supabase
+        .instance.client.auth.currentUser?.id;
+
     if (userId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please log in to use favorites")),
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
+        const SnackBar(
+            content: Text(
+                "Please log in to use favorites")),
       );
       return;
     }
 
-    await FavoriteService.toggleFavorite(widget.match, userId);
+    await FavoriteService
+        .toggleFavorite(
+        widget.match, userId);
 
-    // Optimistic update: flip the star immediately
     setState(() {
       _isFavorite = !_isFavorite;
     });
   }
 
-  void _openDetails(BuildContext context) {
+  void _openDetails(
+      BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => MatchDetailsScreen(match: widget.match),
+        builder: (_) =>
+            MatchDetailsScreen(
+                match: widget.match),
       ),
     );
   }
 
-  /// Helper to load either a Supabase URL or a local asset
-  Widget _teamLogo(String logoPath, {double height = 44}) {
+  /// Supports URL or local asset
+  Widget _teamLogo(String logoPath,
+      {double height = 44}) {
     if (logoPath.startsWith("http")) {
       return Image.network(
         logoPath,
         height: height,
         errorBuilder: (_, __, ___) =>
-            Image.asset('assets/images/default_team.png', height: height),
+            Image.asset(
+              'assets/images/default_team.png',
+              height: height,
+            ),
       );
     } else {
       return Image.asset(
@@ -80,87 +100,153 @@ class _MatchCardState extends State<MatchCard> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark =
+        theme.brightness ==
+            Brightness.dark;
+
     return InkWell(
       onTap: () => _openDetails(context),
-      borderRadius: BorderRadius.circular(16),
+      borderRadius:
+      BorderRadius.circular(16),
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF1E1E1E),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade700, width: 1),
-          boxShadow: const [
+          color: isDark
+              ? const Color(0xFF1E1E1E)
+              : Colors.white,
+          borderRadius:
+          BorderRadius.circular(16),
+          border: Border.all(
+            color: isDark
+                ? Colors.grey.shade800
+                : Colors.grey.shade300,
+            width: 1,
+          ),
+          boxShadow: [
             BoxShadow(
-              color: Colors.black26,
-              blurRadius: 6,
-              offset: Offset(0, 3),
+              color: Colors.black
+                  .withOpacity(
+                  isDark ? 0.4 : 0.08),
+              blurRadius: 8,
+              offset:
+              const Offset(0, 4),
             ),
           ],
         ),
-        padding: const EdgeInsets.all(16),
+        padding:
+        const EdgeInsets.all(16),
         child: Column(
           children: [
-            // ⭐ Favorite Star
+            // Favorite star
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment:
+              MainAxisAlignment.end,
               children: [
                 IconButton(
                   icon: Icon(
-                    _isFavorite ? Icons.star : Icons.star_border,
+                    _isFavorite
+                        ? Icons.star
+                        : Icons.star_border,
                     color: Colors.amber,
                   ),
-                  onPressed: _toggleFavorite,
+                  onPressed:
+                  _toggleFavorite,
                 ),
               ],
             ),
 
-            // Teams Row
+            // Teams row
             Row(
               children: [
                 Expanded(
                   child: Column(
                     children: [
-                      _teamLogo(widget.match.safeHomeLogo, height: 44),
-                      const SizedBox(height: 8),
+                      _teamLogo(
+                          widget.match
+                              .safeHomeLogo),
+                      const SizedBox(
+                          height: 8),
                       Text(
-                        widget.match.homeTeam,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                        widget.match
+                            .homeTeam,
+                        style:
+                        TextStyle(
+                          color: theme
+                              .colorScheme
+                              .onBackground,
+                          fontWeight:
+                          FontWeight
+                              .bold,
                           fontSize: 14,
                         ),
-                        textAlign: TextAlign.center,
+                        textAlign:
+                        TextAlign.center,
                       ),
-                      const SizedBox(height: 2),
-                      const Text("Home",
-                          style: TextStyle(fontSize: 11, color: Colors.grey)),
+                      const SizedBox(
+                          height: 2),
+                      Text(
+                        "Home",
+                        style:
+                        TextStyle(
+                          fontSize: 11,
+                          color: theme
+                              .hintColor,
+                        ),
+                      ),
                     ],
                   ),
                 ),
-                const Text(
+
+                Text(
                   "VS",
-                  style: TextStyle(
-                    color: Colors.white70,
+                  style:
+                  TextStyle(
+                    color: theme
+                        .colorScheme
+                        .onBackground
+                        .withOpacity(
+                        0.7),
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontWeight:
+                    FontWeight.bold,
                   ),
                 ),
+
                 Expanded(
                   child: Column(
                     children: [
-                      _teamLogo(widget.match.safeAwayLogo, height: 44),
-                      const SizedBox(height: 8),
+                      _teamLogo(
+                          widget.match
+                              .safeAwayLogo),
+                      const SizedBox(
+                          height: 8),
                       Text(
-                        widget.match.awayTeam,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                        widget.match
+                            .awayTeam,
+                        style:
+                        TextStyle(
+                          color: theme
+                              .colorScheme
+                              .onBackground,
+                          fontWeight:
+                          FontWeight
+                              .bold,
                           fontSize: 14,
                         ),
-                        textAlign: TextAlign.center,
+                        textAlign:
+                        TextAlign.center,
                       ),
-                      const SizedBox(height: 2),
-                      const Text("Away",
-                          style: TextStyle(fontSize: 11, color: Colors.grey)),
+                      const SizedBox(
+                          height: 2),
+                      Text(
+                        "Away",
+                        style:
+                        TextStyle(
+                          fontSize: 11,
+                          color: theme
+                              .hintColor,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -169,45 +255,82 @@ class _MatchCardState extends State<MatchCard> {
 
             const SizedBox(height: 16),
 
-            // Match Info
             Column(
               children: [
                 Text(
                   "${widget.match.safeDate} • ${widget.match.safeTime}",
-                  style: const TextStyle(
-                    color: Colors.white70,
+                  style:
+                  TextStyle(
+                    color: theme
+                        .colorScheme
+                        .onBackground
+                        .withOpacity(
+                        0.7),
                     fontSize: 13,
-                    fontWeight: FontWeight.w600,
+                    fontWeight:
+                    FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(widget.match.safeLeague,
-                    style: const TextStyle(color: Colors.grey, fontSize: 12)),
-                const SizedBox(height: 4),
-                Text(widget.match.safeVenue,
-                    style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                const SizedBox(
+                    height: 4),
+                Text(
+                  widget.match
+                      .safeLeague,
+                  style:
+                  TextStyle(
+                    color:
+                    theme.hintColor,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(
+                    height: 4),
+                Text(
+                  widget.match
+                      .safeVenue,
+                  style:
+                  TextStyle(
+                    color:
+                    theme.hintColor,
+                    fontSize: 12,
+                  ),
+                ),
               ],
             ),
 
             const SizedBox(height: 18),
 
-            // Primary Action Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => _openDetails(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2ECC71),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                onPressed: () =>
+                    _openDetails(context),
+                style:
+                ElevatedButton
+                    .styleFrom(
+                  backgroundColor:
+                  const Color(
+                      0xFF2ECC71),
+                  foregroundColor:
+                  Colors.white,
+                  padding:
+                  const EdgeInsets
+                      .symmetric(
+                      vertical:
+                      12),
+                  shape:
+                  RoundedRectangleBorder(
+                    borderRadius:
+                    BorderRadius
+                        .circular(
+                        12),
                   ),
                 ),
                 child: const Text(
                   "Predict Now",
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontWeight:
+                    FontWeight.bold,
                     fontSize: 14,
                   ),
                 ),

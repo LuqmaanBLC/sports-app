@@ -5,8 +5,10 @@ class GetStartedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // <-- theme access added
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0E0E10), // dark theme background
+      backgroundColor: theme.scaffoldBackgroundColor, // <-- dynamic theme
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -16,20 +18,20 @@ class GetStartedScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // App Title
-                const Text(
+                Text(
                   'Sports App',
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: theme.colorScheme.onBackground, // <-- theme text color
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'Welcome!',
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.grey,
+                    color: theme.hintColor, // <-- theme hint color
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -65,7 +67,7 @@ class GetStartedScreen extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: () => Navigator.pushNamed(context, '/signup'),
                     style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: Colors.green, width: 2),
+                      side: const BorderSide(color: Colors.green, width: 2),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),

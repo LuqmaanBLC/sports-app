@@ -18,7 +18,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final password = _passwordController.text.trim();
     final confirmPassword = _confirmPasswordController.text.trim();
 
-    if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+    if (email.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please fill in all fields")),
       );
@@ -35,19 +37,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
     try {
       final supabase = Supabase.instance.client;
 
-      // Create user in Supabase Auth
       final response = await supabase.auth.signUp(
         email: email,
         password: password,
       );
 
       if (response.user != null) {
-        // User created successfully
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Account created! Please complete registration.")),
+          const SnackBar(
+              content: Text(
+                  "Account created! Please complete registration.")),
         );
 
-        // Navigate to register screen to fill in extra details
         Navigator.pushReplacementNamed(context, '/register');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -63,21 +64,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121212),
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
-        title: const Text(
+        title: Text(
           "Sign Up",
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: theme.colorScheme.onBackground,
             fontSize: 20,
           ),
         ),
         centerTitle: false,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(
+          color: theme.colorScheme.onBackground,
+        ),
       ),
       body: SafeArea(
         child: Center(
@@ -89,54 +95,63 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 // Email field
                 TextField(
                   controller: _emailController,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(
+                    color: theme.colorScheme.onBackground,
+                  ),
                   decoration: InputDecoration(
                     labelText: "Email",
-                    labelStyle: const TextStyle(color: Colors.grey),
                     filled: true,
-                    fillColor: const Color(0xFF1E1E1E),
+                    fillColor: isDark
+                        ? const Color(0xFF1E1E1E)
+                        : Colors.grey.shade100,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.grey),
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 16),
 
                 // Password field
                 TextField(
                   controller: _passwordController,
-                  style: const TextStyle(color: Colors.white),
                   obscureText: true,
+                  style: TextStyle(
+                    color: theme.colorScheme.onBackground,
+                  ),
                   decoration: InputDecoration(
                     labelText: "Password",
-                    labelStyle: const TextStyle(color: Colors.grey),
                     filled: true,
-                    fillColor: const Color(0xFF1E1E1E),
+                    fillColor: isDark
+                        ? const Color(0xFF1E1E1E)
+                        : Colors.grey.shade100,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.grey),
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 16),
 
                 // Confirm Password field
                 TextField(
                   controller: _confirmPasswordController,
-                  style: const TextStyle(color: Colors.white),
                   obscureText: true,
+                  style: TextStyle(
+                    color: theme.colorScheme.onBackground,
+                  ),
                   decoration: InputDecoration(
                     labelText: "Confirm Password",
-                    labelStyle: const TextStyle(color: Colors.grey),
                     filled: true,
-                    fillColor: const Color(0xFF1E1E1E),
+                    fillColor: isDark
+                        ? const Color(0xFF1E1E1E)
+                        : Colors.grey.shade100,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.grey),
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 32),
 
                 // Sign Up button

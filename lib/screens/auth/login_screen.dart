@@ -26,14 +26,12 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final supabase = Supabase.instance.client;
 
-      // Authenticate with Supabase
       final response = await supabase.auth.signInWithPassword(
         email: email,
         password: password,
       );
 
       if (response.user != null) {
-        // Login successful
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Login successful!")),
         );
@@ -53,21 +51,26 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121212),
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
-        title: const Text(
+        title: Text(
           "Login",
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: theme.colorScheme.onBackground,
             fontSize: 20,
           ),
         ),
         centerTitle: false,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(
+          color: theme.colorScheme.onBackground,
+        ),
       ),
       body: SafeArea(
         child: Center(
@@ -76,12 +79,12 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
+                Text(
                   'Sports App',
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: theme.colorScheme.onBackground,
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -89,36 +92,42 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Email field
                 TextField(
                   controller: _emailController,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(
+                    color: theme.colorScheme.onBackground,
+                  ),
                   decoration: InputDecoration(
                     labelText: "Email",
-                    labelStyle: const TextStyle(color: Colors.grey),
                     filled: true,
-                    fillColor: const Color(0xFF1E1E1E),
+                    fillColor: isDark
+                        ? const Color(0xFF1E1E1E)
+                        : Colors.grey.shade100,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.grey),
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 16),
 
                 // Password field
                 TextField(
                   controller: _passwordController,
-                  style: const TextStyle(color: Colors.white),
                   obscureText: true,
+                  style: TextStyle(
+                    color: theme.colorScheme.onBackground,
+                  ),
                   decoration: InputDecoration(
                     labelText: "Password",
-                    labelStyle: const TextStyle(color: Colors.grey),
                     filled: true,
-                    fillColor: const Color(0xFF1E1E1E),
+                    fillColor: isDark
+                        ? const Color(0xFF1E1E1E)
+                        : Colors.grey.shade100,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.grey),
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 32),
 
                 // Login button
@@ -144,11 +153,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 // Sign Up button
                 OutlinedButton(
-                  onPressed: () => Navigator.pushNamed(context, '/signup'),
+                  onPressed: () =>
+                      Navigator.pushNamed(context, '/signup'),
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 50),
-                    side: const BorderSide(color: Colors.green, width: 2),
-                    backgroundColor: const Color(0xFF121212),
+                    side:
+                    const BorderSide(color: Colors.green, width: 2),
+                    backgroundColor:
+                    theme.scaffoldBackgroundColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),

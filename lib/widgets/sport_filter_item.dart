@@ -16,51 +16,83 @@ class SportFilterItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark =
+        theme.brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: onTap,
-        child: SizedBox(
-          width: 90, // fixed width
-          height: 90, // fixed height
+      child: SizedBox(
+        width: 90,
+        height: 90,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 18), // bigger padding
+          duration:
+          const Duration(milliseconds: 200),
+          padding:
+          const EdgeInsets.symmetric(
+              vertical: 12,
+              horizontal: 18),
           decoration: BoxDecoration(
             color: isSelected
-                ? const Color(0xFF2ECC71) // Green (selected)
-                : const Color(0xFF2A2A2A), // Lighter Dark (unselected)
-            borderRadius: BorderRadius.circular(20), // pill shape
+                ? const Color(0xFF2ECC71)
+                : (isDark
+                ? const Color(0xFF2A2A2A)
+                : Colors.white),
+            borderRadius:
+            BorderRadius.circular(20),
             border: isSelected
                 ? null
-                : Border.all(color: Colors.grey.shade700, width: 1), // Subtle Border
+                : Border.all(
+              color: isDark
+                  ? Colors.grey.shade700
+                  : Colors.grey.shade300,
+              width: 1,
+            ),
             boxShadow: isSelected
                 ? [
               BoxShadow(
-                color: const Color(0xFF2ECC71).withOpacity(0.4),
+                color:
+                const Color(0xFF2ECC71)
+                    .withOpacity(0.4),
                 blurRadius: 6,
-                offset: const Offset(0, 3),
+                offset:
+                const Offset(0, 3),
               ),
             ]
                 : [],
           ),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center, // center vertically
-            crossAxisAlignment: CrossAxisAlignment.center, // center horizontally
+            mainAxisSize:
+            MainAxisSize.min,
+            mainAxisAlignment:
+            MainAxisAlignment.center,
+            crossAxisAlignment:
+            CrossAxisAlignment.center,
             children: [
               Icon(
                 icon,
-                size: 22, // bigger icon
-                color: isSelected ? Colors.black : Colors.white,
+                size: 22,
+                color: isSelected
+                    ? Colors.black
+                    : theme
+                    .colorScheme
+                    .onBackground,
               ),
-              const SizedBox(height: 8), // spacing between icon and text
+              const SizedBox(height: 8),
               Text(
                 label,
                 style: TextStyle(
-                  color: isSelected ? Colors.black : Colors.white,
-                  fontSize: 14, // bigger font
-                  fontWeight: FontWeight.w600,
+                  color: isSelected
+                      ? Colors.black
+                      : theme
+                      .colorScheme
+                      .onBackground,
+                  fontSize: 14,
+                  fontWeight:
+                  FontWeight.w600,
                 ),
-                textAlign: TextAlign.center, // center text
+                textAlign:
+                TextAlign.center,
               ),
             ],
           ),

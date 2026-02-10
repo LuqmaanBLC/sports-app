@@ -10,13 +10,18 @@ class PredictionScreen extends StatefulWidget {
   const PredictionScreen({super.key, required this.match});
 
   @override
-  State<PredictionScreen> createState() => _PredictionScreenState();
+  State<PredictionScreen> createState() =>
+      _PredictionScreenState();
 }
 
-class _PredictionScreenState extends State<PredictionScreen> {
+class _PredictionScreenState
+    extends State<PredictionScreen> {
   String? selectedWinner;
-  final TextEditingController homeScoreController = TextEditingController();
-  final TextEditingController awayScoreController = TextEditingController();
+
+  final TextEditingController homeScoreController =
+  TextEditingController();
+  final TextEditingController awayScoreController =
+  TextEditingController();
 
   @override
   void dispose() {
@@ -27,68 +32,89 @@ class _PredictionScreenState extends State<PredictionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final sport = widget.match.sport.toLowerCase();
+    final theme = Theme.of(context);
+    final isDark =
+        theme.brightness == Brightness.dark;
+
+    final sport =
+    widget.match.sport.toLowerCase();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0E0E10),
+      backgroundColor:
+      theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0E0E10),
+        backgroundColor:
+        theme.appBarTheme.backgroundColor,
         elevation: 0,
-        title: const Text(
+        title: Text(
           "Make Prediction",
           style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+            color:
+            theme.colorScheme.onBackground,
+            fontWeight:
+            FontWeight.bold,
           ),
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(
+          color:
+          theme.colorScheme.onBackground,
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment:
+          CrossAxisAlignment.start,
           children: [
-            // Match Title
+            // Match title
             Text(
               "${widget.match.homeTeam} vs ${widget.match.awayTeam}",
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: theme
+                    .colorScheme.onBackground,
                 fontSize: 22,
-                fontWeight: FontWeight.bold,
+                fontWeight:
+                FontWeight.bold,
               ),
             ),
             const SizedBox(height: 6),
             Text(
               "${widget.match.date} • ${widget.match.time}",
-              style: const TextStyle(color: Colors.grey),
+              style:
+              TextStyle(color: theme.hintColor),
             ),
 
             const SizedBox(height: 30),
 
-            // Winner Selection
-            const Text(
+            // Winner selection
+            Text(
               "Select Winner",
               style: TextStyle(
-                color: Colors.white,
+                color: theme
+                    .colorScheme.onBackground,
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
+                fontWeight:
+                FontWeight.bold,
               ),
             ),
             const SizedBox(height: 12),
 
             radioButton(widget.match.homeTeam),
-            if (sport == "soccer") radioButton("Draw"),
+            if (sport == "soccer")
+              radioButton("Draw"),
             radioButton(widget.match.awayTeam),
 
             const SizedBox(height: 30),
 
-            // Score Inputs
-            const Text(
+            // Score inputs
+            Text(
               "Predicted Score",
               style: TextStyle(
-                color: Colors.white,
+                color: theme
+                    .colorScheme.onBackground,
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
+                fontWeight:
+                FontWeight.bold,
               ),
             ),
             const SizedBox(height: 12),
@@ -97,18 +123,33 @@ class _PredictionScreenState extends State<PredictionScreen> {
               children: [
                 Expanded(
                   child: TextField(
-                    controller: homeScoreController,
-                    keyboardType: TextInputType.number,
-                    style: const TextStyle(color: Colors.white),
-                    textAlign: TextAlign.center,
-                    decoration: InputDecoration(
-                      labelText: widget.match.homeTeam,
-                      labelStyle: const TextStyle(color: Colors.grey),
+                    controller:
+                    homeScoreController,
+                    keyboardType:
+                    TextInputType.number,
+                    textAlign:
+                    TextAlign.center,
+                    style: TextStyle(
+                      color: theme
+                          .colorScheme
+                          .onBackground,
+                    ),
+                    decoration:
+                    InputDecoration(
+                      labelText: widget
+                          .match.homeTeam,
                       filled: true,
-                      fillColor: const Color(0xFF1A1A1D),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Colors.grey.shade700),
+                      fillColor: isDark
+                          ? const Color(
+                          0xFF1A1A1D)
+                          : Colors
+                          .grey.shade100,
+                      border:
+                      OutlineInputBorder(
+                        borderRadius:
+                        BorderRadius
+                            .circular(
+                            12),
                       ),
                     ),
                   ),
@@ -116,18 +157,33 @@ class _PredictionScreenState extends State<PredictionScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: TextField(
-                    controller: awayScoreController,
-                    keyboardType: TextInputType.number,
-                    style: const TextStyle(color: Colors.white),
-                    textAlign: TextAlign.center,
-                    decoration: InputDecoration(
-                      labelText: widget.match.awayTeam,
-                      labelStyle: const TextStyle(color: Colors.grey),
+                    controller:
+                    awayScoreController,
+                    keyboardType:
+                    TextInputType.number,
+                    textAlign:
+                    TextAlign.center,
+                    style: TextStyle(
+                      color: theme
+                          .colorScheme
+                          .onBackground,
+                    ),
+                    decoration:
+                    InputDecoration(
+                      labelText: widget
+                          .match.awayTeam,
                       filled: true,
-                      fillColor: const Color(0xFF1A1A1D),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Colors.grey.shade700),
+                      fillColor: isDark
+                          ? const Color(
+                          0xFF1A1A1D)
+                          : Colors
+                          .grey.shade100,
+                      border:
+                      OutlineInputBorder(
+                        borderRadius:
+                        BorderRadius
+                            .circular(
+                            12),
                       ),
                     ),
                   ),
@@ -137,84 +193,149 @@ class _PredictionScreenState extends State<PredictionScreen> {
 
             const SizedBox(height: 36),
 
-            // Save Prediction CTA
+            // Save prediction
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
+                style: ElevatedButton
+                    .styleFrom(
+                  backgroundColor:
+                  const Color(
+                      0xFF2ECC71),
+                  foregroundColor:
+                  Colors.white,
+                  padding:
+                  const EdgeInsets
+                      .symmetric(
+                      vertical:
+                      16),
+                  shape:
+                  RoundedRectangleBorder(
+                    borderRadius:
+                    BorderRadius
+                        .circular(
+                        14),
+                  ),
+                ),
                 onPressed: () async {
-                  if (selectedWinner == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Select a winner first")),
+                  if (selectedWinner ==
+                      null) {
+                    ScaffoldMessenger.of(
+                        context)
+                        .showSnackBar(
+                      const SnackBar(
+                          content: Text(
+                              "Select a winner first")),
                     );
                     return;
                   }
 
-                  final homeScore = int.tryParse(homeScoreController.text) ?? 0;
-                  final awayScore = int.tryParse(awayScoreController.text) ?? 0;
+                  final homeScore =
+                      int.tryParse(
+                          homeScoreController
+                              .text) ??
+                          0;
+                  final awayScore =
+                      int.tryParse(
+                          awayScoreController
+                              .text) ??
+                          0;
 
                   String winnerValue;
-                  if (selectedWinner == widget.match.homeTeam) {
-                    winnerValue = "home";
-                  } else if (selectedWinner == widget.match.awayTeam) {
-                    winnerValue = "away";
+                  if (selectedWinner ==
+                      widget.match
+                          .homeTeam) {
+                    winnerValue =
+                    "home";
+                  } else if (selectedWinner ==
+                      widget.match
+                          .awayTeam) {
+                    winnerValue =
+                    "away";
                   } else {
-                    winnerValue = "draw";
+                    winnerValue =
+                    "draw";
                   }
 
-                  final user = Supabase.instance.client.auth.currentUser;
+                  final user = Supabase
+                      .instance
+                      .client
+                      .auth
+                      .currentUser;
+
                   if (user == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("You must be logged in to save a prediction")),
+                    ScaffoldMessenger.of(
+                        context)
+                        .showSnackBar(
+                      const SnackBar(
+                          content: Text(
+                              "You must be logged in to save a prediction")),
                     );
                     return;
                   }
 
                   try {
-                    // 🔹 Save prediction to Supabase
-                    await PredictionService.savePrediction(
-                      matchId: widget.match.id,
+                    await PredictionService
+                        .savePrediction(
+                      matchId:
+                      widget.match.id,
                       userId: user.id,
-                      predictedHomeScore: homeScore,
-                      predictedAwayScore: awayScore,
-                      predictedWinner: winnerValue,
+                      predictedHomeScore:
+                      homeScore,
+                      predictedAwayScore:
+                      awayScore,
+                      predictedWinner:
+                      winnerValue,
                     );
 
-                    // 🔹 Save to local history
-                    await HistoryService.addToHistory(
-                      matchId: widget.match.id,
-                      homeTeam: widget.match.homeTeam,
-                      awayTeam: widget.match.awayTeam,
-                      date: widget.match.date ?? "", // fixed,
-                      time: widget.match.time ?? "", // fixed,
-                      predictedHomeScore: homeScore,
-                      predictedAwayScore: awayScore,
-                      predictedWinner: winnerValue,
+                    await HistoryService
+                        .addToHistory(
+                      matchId:
+                      widget.match.id,
+                      homeTeam: widget
+                          .match.homeTeam,
+                      awayTeam: widget
+                          .match.awayTeam,
+                      date:
+                      widget.match.date ??
+                          "",
+                      time:
+                      widget.match.time ??
+                          "",
+                      predictedHomeScore:
+                      homeScore,
+                      predictedAwayScore:
+                      awayScore,
+                      predictedWinner:
+                      winnerValue,
                     );
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Prediction saved!")),
+                    ScaffoldMessenger.of(
+                        context)
+                        .showSnackBar(
+                      const SnackBar(
+                          content: Text(
+                              "Prediction saved!")),
                     );
 
-                    Navigator.pop(context);
+                    Navigator.pop(
+                        context);
                   } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Error saving prediction: $e")),
+                    ScaffoldMessenger.of(
+                        context)
+                        .showSnackBar(
+                      SnackBar(
+                          content: Text(
+                              "Error saving prediction: $e")),
                     );
                   }
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2ECC71),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
                 child: const Text(
                   "Save Prediction",
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontWeight:
+                    FontWeight.bold,
                   ),
                 ),
               ),
@@ -226,22 +347,40 @@ class _PredictionScreenState extends State<PredictionScreen> {
   }
 
   Widget radioButton(String value) {
+    final theme = Theme.of(context);
+    final isDark =
+        theme.brightness == Brightness.dark;
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin:
+      const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1D),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade700),
+        color: isDark
+            ? const Color(0xFF1A1A1D)
+            : Colors.grey.shade100,
+        borderRadius:
+        BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark
+              ? Colors.grey.shade800
+              : Colors.grey.shade300,
+        ),
       ),
       child: RadioListTile<String>(
         title: Text(
           value,
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: theme
+                .colorScheme.onBackground,
+          ),
         ),
         value: value,
         groupValue: selectedWinner,
-        activeColor: const Color(0xFF2ECC71),
-        onChanged: (val) => setState(() => selectedWinner = val),
+        activeColor:
+        const Color(0xFF2ECC71),
+        onChanged: (val) =>
+            setState(() =>
+            selectedWinner = val),
       ),
     );
   }
