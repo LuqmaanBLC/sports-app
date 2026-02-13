@@ -308,6 +308,7 @@ class _PredictionScreenState
                       awayScore,
                       predictedWinner:
                       winnerValue,
+                      sport: widget.match.sport,
                     );
 
                     ScaffoldMessenger.of(

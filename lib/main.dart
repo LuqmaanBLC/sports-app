@@ -54,11 +54,29 @@ class _SportsAppState extends State<SportsApp> {
           title: 'Sports App',
           debugShowCheckedModeBanner: false,
 
-          /// ---- Light/Dark theme support ----
-          theme: ThemeData.light(),
-          darkTheme: ThemeData.dark(),
+          /// ---- Light/Dark theme support with matching AppBar ----
+          theme: ThemeData(
+            brightness: Brightness.light,
+            scaffoldBackgroundColor: Colors.white,
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.white,   // ✅ matches scaffold
+              foregroundColor: Colors.black,   // text/icons black
+              elevation: 0,
+              surfaceTintColor: Colors.transparent, // ✅ prevents grey overlay
+            ),
+          ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            scaffoldBackgroundColor: Colors.black,
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.black,   // ✅ matches scaffold
+              foregroundColor: Colors.white,   // text/icons white
+              elevation: 0,
+              surfaceTintColor: Colors.transparent, // ✅ prevents grey overlay
+            ),
+          ),
           themeMode: _themeController.themeMode,
-          /// -----------------------------------
+          /// -------------------------------------------------------
 
           initialRoute:
           widget.isLoggedIn ? '/mainApp' : '/getStarted',
@@ -67,8 +85,7 @@ class _SportsAppState extends State<SportsApp> {
             '/getStarted': (context) => GetStartedScreen(),
             '/login': (context) => LoginScreen(),
             '/signup': (context) => SignUpScreen(),
-            '/forgotPassword': (context) =>
-                ForgotPasswordScreen(),
+            '/forgotPassword': (context) => ForgotPasswordScreen(),
             '/register': (context) => RegisterScreen(),
             '/mainApp': (context) => MainAppShell(),
 

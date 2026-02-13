@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/history_service.dart';
+import '../../widgets/sport_filter_item.dart';
+import 'package:intl/intl.dart'; // for formatting dates
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -11,11 +13,33 @@ class HistoryScreen extends StatefulWidget {
 class _HistoryScreenState extends State<HistoryScreen> {
   late Future<List<dynamic>> _historyFuture;
 
+  String? selectedSport;
+  String? selectedTeam;
+  DateTime? selectedDate;
+
   @override
   void initState() {
     super.initState();
-    _historyFuture = HistoryService.loadHistory();
+    _loadHistory();
   }
+
+  void _loadHistory() {
+    setState(() {
+      _historyFuture = HistoryService.loadHistory(
+        sport: selectedSport,
+        team: selectedTeam,
+        date: selectedDate != null
+            ? DateFormat("EEE, dd MMM yyyy").format(selectedDate!)
+            : null,
+      );
+    });
+  }
+
+  final Map<String, List<String>> sportTeams = {
+    "Soccer": ["Manchester United", "Liverpool", "Chelsea"],
+    "Rugby": ["Springboks", "All Blacks", "England"],
+    "Cricket": ["India", "Australia", "South Africa"],
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -37,134 +61,209 @@ class _HistoryScreenState extends State<HistoryScreen> {
         centerTitle: false,
         automaticallyImplyLeading: false,
       ),
-      body: FutureBuilder<List<dynamic>>(
-        future: _historyFuture,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          final history = snapshot.data!;
-
-          if (history.isEmpty) {
-            return Center(
-              child: Text(
-                "No prediction history found.",
-                style: TextStyle(
-                  color: theme.hintColor,
-                  fontSize: 16,
+      body: Column(
+        children: [
+          // Sport filter row
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              children: [
+                SportFilterItem(
+                  label: "All",
+                  icon: Icons.sports,
+                  isSelected: selectedSport == null,
+                  onTap: () {
+                    selectedSport = null;
+                    selectedTeam = null;
+                    _loadHistory();
+                  },
                 ),
-              ),
-            );
-          }
+                const SizedBox(width: 8),
+                SportFilterItem(
+                  label: "Soccer",
+                  icon: Icons.sports_soccer,
+                  isSelected: selectedSport == "Soccer",
+                  onTap: () {
+                    selectedSport = "Soccer";
+                    selectedTeam = null;
+                    _loadHistory();
+                  },
+                ),
+                const SizedBox(width: 8),
+                SportFilterItem(
+                  label: "Rugby",
+                  icon: Icons.sports_rugby,
+                  isSelected: selectedSport == "Rugby",
+                  onTap: () {
+                    selectedSport = "Rugby";
+                    selectedTeam = null;
+                    _loadHistory();
+                  },
+                ),
+                const SizedBox(width: 8),
+                SportFilterItem(
+                  label: "Cricket",
+                  icon: Icons.sports_cricket,
+                  isSelected: selectedSport == "Cricket",
+                  onTap: () {
+                    selectedSport = "Cricket";
+                    selectedTeam = null;
+                    _loadHistory();
+                  },
+                ),
+              ],
+            ),
+          ),
 
-          return ListView.builder(
-            itemCount: history.length,
-            itemBuilder: (context, index) {
-              final item = history[index];
+          // Team + Date filters beneath sport chips
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButton<String>(
+                        hint: const Text("Select Sport"),
+                        value: selectedSport,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedSport = value;
+                            selectedTeam = null;
+                            _loadHistory();
+                          });
+                        },
+                        items: ["Soccer", "Rugby", "Cricket"]
+                            .map((sport) => DropdownMenuItem(
+                          value: sport,
+                          child: Text(sport),
+                        ))
+                            .toList(),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: DropdownButton<String>(
+                        hint: const Text("Select Team"),
+                        value: selectedTeam,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedTeam = value;
+                            _loadHistory();
+                          });
+                        },
+                        items: selectedSport == null
+                            ? []
+                            : sportTeams[selectedSport]!
+                            .map((team) => DropdownMenuItem(
+                          value: team,
+                          child: Text(team),
+                        ))
+                            .toList(),
+                      ),
+                    ),
+                  ],
+                ),
 
-              return Card(
-                color: isDark
-                    ? const Color(0xFF1E1E1E)
-                    : Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(
-                    color: isDark
-                        ? Colors.grey.shade800
-                        : Colors.grey.shade300,
-                    width: 1,
+                const SizedBox(height: 8),
+
+                // Date picker button
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.date_range),
+                        label: const Text("Pick Date"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2ECC71),
+                          foregroundColor: Colors.white,
+                        ),
+                        onPressed: () async {
+                          FocusScope.of(context).unfocus();
+
+                          DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2020),
+                            lastDate: DateTime(2030),
+                          );
+
+                          if (pickedDate != null) {
+                            setState(() {
+                              selectedDate = pickedDate;
+                              _loadHistory();
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+
+                if (selectedDate != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(
+                      "Selected: ${DateFormat("EEE, dd MMM yyyy").format(selectedDate!)}",
+                      style: TextStyle(color: theme.hintColor),
+                    ),
                   ),
-                ),
-                margin: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 8),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment:
-                    CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "${item['homeTeam']} vs ${item['awayTeam']}",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: theme
-                              .colorScheme.onBackground,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        "${item['date']} • ${item['time']}",
-                        style: TextStyle(
-                          color: theme.hintColor,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
+              ],
+            ),
+          ),
 
-                      Text(
-                        "Your Prediction: ${item['predictedHomeScore']} - ${item['predictedAwayScore']}",
-                        style: TextStyle(
-                          color: theme
-                              .colorScheme.onBackground,
-                        ),
-                      ),
-                      Text(
-                        "Winner: ${item['predictedWinner']}",
-                        style: TextStyle(
-                          color: theme
-                              .colorScheme.onBackground,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
+          // History list
+          Expanded(
+            child: FutureBuilder<List<dynamic>>(
+              future: _historyFuture,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? const Color(0xFF2A2A2A)
-                              : Colors.grey.shade100,
-                          borderRadius:
-                          BorderRadius.circular(8),
-                          border: Border.all(
-                            color: isDark
-                                ? Colors.grey.shade800
-                                : Colors.grey.shade300,
-                          ),
-                        ),
-                        child: Text(
-                          item["isPredictionCorrect"] ==
-                              null
-                              ? "Match not completed yet"
-                              : item["isPredictionCorrect"] ==
-                              true
-                              ? "Correct Prediction ✔️"
-                              : "Incorrect Prediction ❌",
+                final history = snapshot.data!;
+                if (history.isEmpty) {
+                  return Center(
+                    child: Text(
+                      "No prediction history found.",
+                      style: TextStyle(color: theme.hintColor),
+                    ),
+                  );
+                }
+
+                return ListView.separated(
+                  itemCount: history.length,
+                  itemBuilder: (context, index) {
+                    final item = history[index];
+                    return Card(
+                      margin: const EdgeInsets.symmetric(horizontal: 12),
+                      color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                      child: ListTile(
+                        title: Text("${item['homeTeam']} vs ${item['awayTeam']}"),
+                        subtitle: Text("${item['date']} • ${item['time']}"),
+                        trailing: Text(
+                          item["isPredictionCorrect"] == null
+                              ? "Pending"
+                              : item["isPredictionCorrect"] == true
+                              ? "✔️"
+                              : "❌",
                           style: TextStyle(
-                            fontSize: 14,
-                            color: item[
-                            "isPredictionCorrect"] ==
-                                null
-                                ? theme.hintColor
-                                : item["isPredictionCorrect"] ==
-                                true
+                            color: item["isPredictionCorrect"] == true
                                 ? Colors.green
                                 : Colors.red,
-                            fontWeight:
-                            FontWeight.bold,
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
-        },
+                    );
+                  },
+                  separatorBuilder: (context, index) =>
+                  const SizedBox(height: 12),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

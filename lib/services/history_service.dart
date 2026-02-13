@@ -13,6 +13,7 @@ class HistoryService {
     required int predictedHomeScore,
     required int predictedAwayScore,
     required String predictedWinner,
+    required String sport,
   }) async {
     final userId = _client.auth.currentUser?.id;
     if (userId == null) return;
@@ -22,11 +23,12 @@ class HistoryService {
       'user_id': userId,
       'home_team': homeTeam,
       'away_team': awayTeam,
-      'date': date,
+      'date': date, // stored as text like "Sat, 29 Nov 2025"
       'time': time,
       'predicted_home_score': predictedHomeScore,
       'predicted_away_score': predictedAwayScore,
       'predicted_winner': predictedWinner,
+      'sport': sport,
       'actual_home_score': null,
       'actual_away_score': null,
       'final_winner': null,
@@ -34,16 +36,24 @@ class HistoryService {
     });
   }
 
-  /// Load all history entries for the current user
-  static Future<List<Map<String, dynamic>>> loadHistory() async {
+  /// Load history entries with optional filters
+  static Future<List<Map<String, dynamic>>> loadHistory({
+    String? sport,
+    String? team,
+    String? date, // single date filter
+  }) async {
     final userId = _client.auth.currentUser?.id;
     if (userId == null) return [];
 
-    final response = await _client
-        .from('history')
-        .select()
-        .eq('user_id', userId)
-        .order('created_at', ascending: false);
+    var query = _client.from('history').select().eq('user_id', userId);
+
+    if (sport != null) query = query.eq('sport', sport);
+    if (team != null) {
+      query = query.or('home_team.eq.$team,away_team.eq.$team');
+    }
+    if (date != null) query = query.eq('date', date);
+
+    final response = await query.order('created_at', ascending: false);
 
     if (response == null) return [];
 

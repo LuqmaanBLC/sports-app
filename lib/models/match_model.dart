@@ -42,6 +42,28 @@ class MatchModel {
     this.isPredictionCorrect,
   });
 
+  factory MatchModel.fromJson(Map<String, dynamic> row) {
+    return MatchModel(
+      id: row['id'] as String,
+      sport: row['sport'] as String,
+      homeTeam: row['home_team'] as String,
+      awayTeam: row['away_team'] as String,
+      league: row['league'],
+      homeLogo: row['home_logo'],
+      awayLogo: row['away_logo'],
+      venue: row['venue'],
+      time: row['time'],
+      date: row['date'],
+      finalScore: row['final_score'],
+      finalWinner: row['final_winner'],
+      predictedHomeScore: row['predicted_home_score'],
+      predictedAwayScore: row['predicted_away_score'],
+      actualHomeScore: row['actual_home_score'],
+      actualAwayScore: row['actual_away_score'],
+      isPredictionCorrect: row['is_prediction_correct'],
+    );
+  }
+
   /// Safe getters (UI will never crash)
   String get safeHomeLogo => homeLogo ?? 'assets/images/default_team.png';
   String get safeAwayLogo => awayLogo ?? 'assets/images/default_team.png';

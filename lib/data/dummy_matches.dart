@@ -37,4 +37,17 @@ final List<MatchModel> dummyMatches = [
     time: "14:00",
     date: "Sun, 30 Nov 2025",
   ),
+  // ✅ New match added here
+  //MatchModel(
+    //id: "chelsea_arsenal_sat,_14_feb_2026_20-00",
+    //sport: "Soccer",
+    //homeTeam: "Chelsea",
+    //awayTeam: "Arsenal",
+    //league: "Premier League",
+    //homeLogo: "assets/logos/chelsea.png",
+    //awayLogo: "assets/logos/arsenal.png",
+    //venue: "Stamford Bridge",
+    //time: "20:00",
+    //date: "Sat, 14 Feb 2026",
+  //),
 ];
